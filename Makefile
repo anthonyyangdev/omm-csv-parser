@@ -12,4 +12,4 @@ node: clean
 
 
 clean:
-	rm -rf _build ./omm ./.merlin ./omm.js ./omm.compressed.js
+	rm -rf _build ./omm ./.merlin omm.js omm.compressed.js
