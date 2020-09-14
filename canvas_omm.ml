@@ -1,3 +1,5 @@
+module StringMap = Map.Make(String)
+
 (** [section_index header] is possibly the index of the section value in the
     Csv downloaded from Canvas's OMM module.
 *)
@@ -42,8 +44,6 @@ let filter filename section =
     | None -> raise (Invalid_argument("Csv does not contain sections."))
     | Some i -> header::(filter_csv students i section)
 
-module StringMap = Map.Make(String)
-
 (** [options map] is the list of CLI options and specifications for
     [Arg.parse].
 *)
@@ -60,7 +60,9 @@ let options map: (string * Arg.spec * string) list =
 (** [main ()] begins the program. *)
 let main () =
   let map = ref (StringMap.singleton "o" "omm.csv") in
-  Arg.parse (options map) (fun i -> map := StringMap.add "i" i !map) "";
+  let parse_options = options map in
+  let msg = "omm is for parsing and filtering the csv downloaded from Canvas" in
+  Arg.parse (parse_options) (fun i -> map := StringMap.add "i" i !map) msg;
   try
     let filename = StringMap.find "i" !map in
     let section = StringMap.find "s" !map |> int_of_string in
@@ -68,7 +70,17 @@ let main () =
     let filtered = filter filename section in
     Csv.save output filtered
   with
-  | Not_found -> print_endline "Not all arguments are given."
+  | Not_found ->
+    print_endline "Not all arguments were provided.";
+    print_endline {|
+      Please include the input csv, the section number, and
+      optionally the output file name.
+
+      Examples:
+        omm canvas.csv -s 218
+        omm -i canvas.csv -s 218 -o canvas.218.csv
+    |}
   | Failure _ -> print_endline "Invalid integer given for section."
+  | Sys_error e -> print_string "Error! "; print_endline e
 
 let () = main()
