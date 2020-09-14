@@ -1,4 +1,5 @@
 (executable
  (name canvas_omm)
  (libraries csv str)
+ (modes js exe)
 )

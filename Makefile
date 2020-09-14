@@ -1,9 +1,15 @@
-main:
+exe:
 	dune build canvas_omm.exe
 	cp _build/default/canvas_omm.exe omm
 
-path: clean main
-	mv ./omm /usr/local/bin
+exe_path: clean exe
+	python3 setup.py omm
+
+node:
+	dune build canvas_omm.bc.js
+	cp _build/default/canvas_omm.bc.js omm.js
+	uglifyjs --compress --mangle --output omm.compressed.js -- omm.js
+
 
 clean:
-	rm -rf _build ./omm ./.merlin
+	rm -rf _build ./omm ./.merlin ./omm.js ./omm.compressed.js
