@@ -61,10 +61,14 @@ let options map: (string * Arg.spec * string) list =
 let main () =
   let map = ref (StringMap.singleton "o" "omm.csv") in
   Arg.parse (options map) (fun i -> map := StringMap.add "i" i !map) "";
-  let filename = StringMap.find "i" !map in
-  let section = StringMap.find "s" !map |> int_of_string in
-  let output = StringMap.find "o" !map in
-  let filtered = filter filename section in
-  Csv.save output filtered
+  try
+    let filename = StringMap.find "i" !map in
+    let section = StringMap.find "s" !map |> int_of_string in
+    let output = StringMap.find "o" !map in
+    let filtered = filter filename section in
+    Csv.save output filtered
+  with
+  | Not_found -> print_endline "Not all arguments are given."
+  | Failure _ -> print_endline "Invalid integer given for section."
 
 let () = main()
