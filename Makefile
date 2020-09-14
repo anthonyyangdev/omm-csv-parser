@@ -6,4 +6,4 @@ path: clean main
 	mv ./omm /usr/local/bin
 
 clean:
-	rm -rf _build ./omm
+	rm -rf _build ./omm ./.merlin
